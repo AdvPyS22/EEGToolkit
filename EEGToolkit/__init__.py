@@ -1,2 +1,2 @@
-from .EEGData import EEGData
+from .EEGData import *
 from .EEGStats import *
