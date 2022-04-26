@@ -53,7 +53,7 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from EEGStats import plot_signal, difference_plot
+from .EEGStats import plot_signal, difference_plot
 
 supported_filetypes = [ "npy", "tsv", "csv", "txt" ]
 class EEGData():
