@@ -30,10 +30,11 @@ a desirable extention.
 #### General TODOs 
 - [x] proper **Docstrings** and comments in general ...
 - [x] re-factoring for private methods ... 
-- [ ] requirements.txt
-- [ ] setup.py 
+- [x] requirements.txt
+- [x] setup.py 
     - [ ] (optional but kinda cool) adding EEGData to PYTHONPATH to allow direct CLI calling...
 - [ ] `testpypi` distribution
+- [x] HTML documentation 
 
 #### CLI TODOs:
 - [x] Core is pretty much finished already...
