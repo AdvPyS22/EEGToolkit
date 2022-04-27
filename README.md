@@ -28,8 +28,8 @@ a desirable extention.
 ### Implementation
 
 #### General TODOs 
-- [ ] proper **Docstrings** and comments in general ...
-- [ ] re-factoring for private methods ... 
+- [ x ] proper **Docstrings** and comments in general ...
+- [ x ] re-factoring for private methods ... 
 - [ ] requirements.txt
 - [ ] setup.py 
     - [ ] (optional but kinda cool) adding EEGData to PYTHONPATH to allow direct CLI calling...
@@ -37,19 +37,19 @@ a desirable extention.
 
 #### CLI TODOs:
 - [ x ] Core is pretty much finished already...
-- [ ] Change the `argparse` settings to allow defaults for parameters like x_scale to allow easier usage
+- [ x ] Change the `argparse` settings to allow defaults for parameters like x_scale to allow easier usage
 
 #### Task TODOs:
 ##### Task 1: 
 - [ x ] Event extraction is pretty much finished already 
 > Possible additions: <br>
-> - [ ] split reading the files and extracting data, thereby allowing different filetypes to be processed. In case this is done, we might add support for `txt` / `tsv` / `csv` files for more general applicability of the software. 
+> - [ x ] split reading the files and extracting data, thereby allowing different filetypes to be processed. In case this is done, we might add support for `txt` / `tsv` / `csv` files for more general applicability of the software. 
 
 
 ##### Task 2: 
 - [ x ] plotting is pretty much finished already...
 - [ ] Add units to the figure axes labels
-- [ ] (optional) adjust color scheme ...
+- [ x ] (optional) adjust color scheme ...
 
 ##### Task 3: 
 - [ ] What about the intra-signal baseline-comparison ? 
