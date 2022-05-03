@@ -4,48 +4,6 @@ This module provides a data class `EEGData` to work with EEG signal data for eve
 It works with two separate input datafiles, one storing the EEG signal itself as a 1D array, and one 
 describing event metadata as a 2D array, describing both the timepoints and the type of event in two columns.
 
-Supported file types are:
-- `npy`
-- `txt`     ( space-separated for events datafiles )
-- `tsv`
-- `csv`     (both `,` and `;` separated )   
-
-### Example Usage
-To use this module for data analysis, only three steps are necessary,
-(1st) setup of the `EEGData` object, (2nd) event data extraction, and (3rd)
-data summary (which performs signal comparison).
-
-```
-# setting up the EEGData with some datafiles
-eeg = EEGData( eeg_path = "data/eeg.npy", event_path = "data/events.npy", sampling_frequency = 500 )
-
-# extract the events data
-data.extract( start_sec = -0.3 , stop_sec = 1 )
-
-# summarize and pair-wise compare event-signal types.
-data.summary(
-                significance_level = 0.05,
-                x_scale = 1000,
-                y_scale = 10000,
-            )
-```
-
-### CLI 
-This module additionally offers a CLI to directly call the full analysis procedure from the terminal.
-
-```
-python3 EEGData.py \
-                    --eeg_path "./data/eeg.npy" \
-                    --event_path "./data/events.npy" \
-                    --sampling_frequency 500 \
-                    --p_value 0.05 \
-                    --start_sec -0.3 \
-                    --stop_sec 1.0 \
-                    --x_scale 1000 \
-                    --y_scale 10000 \
-                    --output "./test_output.pdf"
-```
-
 """
 
 import os
@@ -53,7 +11,7 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from .EEGStats import plot_signal, difference_plot
+from EEGStats import plot_signal, difference_plot
 
 supported_filetypes = [ "npy", "tsv", "csv", "txt" ]
 class EEGData():
@@ -119,6 +77,17 @@ class EEGData():
         # in seconds
         self._start_sec = -0.5
         self._stop_sec = 1
+
+        # and setup the extracted events in case 
+        # only a subset are being extacted
+        self._extracted_events = None
+
+        # save a baseline for each event type which will be an 
+        # np.ndarray to store the timepoints (or a subset thereof)
+        # before the signal onset. The time points will be sampled
+        # from the extracted timepoints...
+        self._baseline = None
+
 
     def read( self, signal_path : str = None , event_path : str = None ) -> None: 
         """
@@ -230,6 +199,7 @@ class EEGData():
                 ]
 
             self._data = data
+            self._extracted_events = events_to_extract
             return data
 
         # check if there is a provided subset of events to extract
@@ -244,29 +214,15 @@ class EEGData():
                 ]
 
             self._data = data
+            self._extracted_events = events_to_extract
             return data
 
         # now the part for extracting only a 
         # single event type data
-        
-        # first adjust the start and end to 
-        # match the sampling frequency 
-        start_frame = int( start_sec * self.sampling_frequency )
-        stop_frame = int( stop_sec * self.sampling_frequency )
-
-        # next generate a set of slices for the EEG data around the timepoints for
-        # the events
-        firing_slices = [
-                            slice( event[0]+start_frame, event[0]+stop_frame ) 
-                            for event in self.events 
-                            if event[1] == event_type
-                    ]
-
-        # now get the actual data of the event
-        data = [ self.signal[ slice ] for slice in firing_slices ]
-        data = np.array( data )
-
+        data = self._extract_window(start_sec, stop_sec, event_type)
         self._data = data
+
+        self._extracted_events = event_type
 
         # store start and stop sec values
         # for later use in summary()
@@ -274,6 +230,81 @@ class EEGData():
         self._stop_sec = stop_sec
 
         return data
+
+    def baseline( self, size : int or float = None ):
+        """
+        Generates a baseline distribution for EEG Signals,
+        using random sampling from pre-signal timepoints accross 
+        replicates and events.
+
+        Note
+        ----
+        This requires that events have already been extacted!
+
+        Parameters
+        ----------
+        size : int or float
+            The number of random samples to draw. If `None` are provided (default)
+            the entire available pre-signal data is used. If an `integer` is provided
+            then the final baseline data contains exactly the given number of datapoints.
+            Alternatively, a `float` `0 < size <= 1` may be provided to specify a fraction
+            of data to sample from. E.g. `size = 0.2` would incorporate 20% of the available
+            datapoints into the baseline.
+        
+        Returns
+        -------
+        baseline : np.ndarray
+            An np.ndarray of the randomly drawn samples.
+        """
+        start_sec, stop_sec = self._start_sec, self._stop_sec
+
+        # first get the time period before t=0, beginning at the starting time...
+        if isinstance( self._data, list ):
+            random_samples = [ self._extract_window( start_sec, 0, e ) for e in self._extracted_events ]
+        elif isinstance( self._data, np.ndarray ):
+            random_samples = [ self._extract_window( start_sec, 0, self._extracted_events ) ]        
+        elif self._data is None:
+            raise Exception( f"No events data has been extracted yet! Make sure to run extract() before computing a baseline." )
+
+        # collapse the repeats into a single dataset
+        random_samples = [ np.reshape( i, i.size ) for i in random_samples ] 
+
+        # now if there is a provided size we subsample
+        if size is not None: 
+            if size <= 1:
+                random_samples = [ np.random.choice( i, size = size * i.size ) for i in random_samples ]
+            elif size > 1:
+                random_samples = [ np.random.choice( i, size = size ) for i in random_samples ]
+            else:
+                raise ValueError( f"size needs to be a fraction in [0,1] or an integer > 1 (got size = {size})" )
+
+        self._baseline = random_samples
+
+        # Alright, we currently have the entire sets of pre-timeframes for the baseline and we
+        # will use them as they are completely to use for the baseline comparison. 
+        # With the code below we compare a sub-sampled versions thereof. Long story short,
+        # it works also pretty well with sub-sampled versions as well...
+        # import statsmodels.api as sm
+        # from matplotlib import colors
+
+        # fig, ax = plt.subplots( 2,3 ) 
+        # for r in random_samples:
+        #     ax[0,0].plot( r )
+        #     r1 = r.reshape( r.size )
+        #     ax[0,1].hist( r1, bins = 50 )
+
+        #     sm.qqplot( r1, ax = ax[0,2], alpha = 0.3, line = "s", color = list(colors.cnames.values())[ int(np.random.randint(low = 0, high = 10, size = 1))]  )
+        # random_samples = [ np.random.choice( r.reshape(r.size), size = size, replace = False ) for r in random_samples ]
+        
+        # for r in random_samples:
+        #     ax[1,0].plot( r )
+        #     r1 = np.reshape( r, r.size )
+        #     ax[1,1].hist( r1, bins = 50 )
+            
+        #     sm.qqplot( r1, ax = ax[1,2], alpha = 0.3, line = "s", color =  list(colors.cnames.values())[ int(np.random.randint(low = 0, high = 10, size = 1))] )
+        # # ax[1].hist( np.reshape( random_samples, random_samples.size)  )
+        # plt.tight_layout()
+        # plt.show()
 
     def summary(self,
                 x_scale:float,
@@ -313,20 +344,23 @@ class EEGData():
         """
 
         # extract the event data if not yet done already
+        start_sec = kwargs.pop( "start_sec", self._start_sec )
+        stop_sec = kwargs.pop( "stop_sec", self._stop_sec )
         if self._data is None: 
 
-            start_sec = kwargs.pop( "start_sec", self._start_sec )
-            stop_sec = kwargs.pop( "stop_sec", self._stop_sec )
             self.extract( start_sec = start_sec, stop_sec = stop_sec, **kwargs )
+            self.baseline() 
 
         data = list( self._data ) 
         signals = list(self.n_events.keys())
         n = len(data)
 
-        start_sec, stop_sec = self._start_sec, self._stop_sec
-
         # generate a new figure
         fig, ax = plt.subplots(n,n)
+
+        # setup a baseline reference, either with the computed
+        # baselines or None ...
+        baseline = self._baseline if self._baseline is not None else [ None for i in range(n) ]
 
         # now first plot the individual signals
         # on their own on diagonal plots
@@ -339,6 +373,7 @@ class EEGData():
                     self.sampling_frequency, 
                     start_sec, stop_sec, 
                     x_scale, y_scale,
+                    baseline = baseline[i],
                     make_legend = make_legend,
                     ax = ax[i,i] )
                 
@@ -375,6 +410,39 @@ class EEGData():
             plt.show()
             return fig
         plt.savefig(output, bbox_inches = "tight" )
+
+
+    def _extract_window(self, start_sec, stop_sec, event_type):
+        """
+        Extracts a set of time-frame windows from the data 
+        and returns them as a numpy ndarray.
+        """
+
+        # first adjust the start and end to 
+        # match the sampling frequency
+        start_frame, stop_frame = self._adjust_timesteps(start_sec, stop_sec)
+
+        # next generate a set of slices for the EEG data around the timepoints for
+        # the events
+        firing_slices = [
+                            slice( event[0]+start_frame, event[0]+stop_frame ) 
+                            for event in self.events 
+                            if event[1] == event_type
+                    ]
+
+        # now get the actual data of the event
+        data = [ self.signal[ slice ] for slice in firing_slices ]
+        data = np.array( data )
+        return data
+
+    def _adjust_timesteps(self, start_sec, stop_sec):
+        """
+        Adjusts time steps / time points with the used recording frequency,
+        to match the indices within the data.
+        """
+        start_frame = int( start_sec * self.sampling_frequency )
+        stop_frame = int( stop_sec * self.sampling_frequency )
+        return start_frame,stop_frame
 
     def _set_n_events(self) -> None:
         """
@@ -548,4 +616,19 @@ def main():
         print( f"Output saved successfully to: '{args.output}'" ) 
 
 if __name__ == "__main__":
-    main()
+
+    test_mode = False
+    if not test_mode:
+        main()
+    else: 
+        print( "Running in Test Mode" )
+
+        eeg = "./data/eeg.npy"
+        events = "./data/events.npy"
+
+        e = EEGData( eeg, events, 500 )
+        e.extract( -0.3, 1 )
+        e.baseline()
+        e.summary( 1000, 1000, output = "./test.pdf" )
+        plt.show()
+        print( e.events )

@@ -53,5 +53,5 @@ a desirable extention.
 - [x] (optional) adjust color scheme ...
 
 ##### Task 3: 
-- [ ] What about the intra-signal baseline-comparison ? 
+- [x] What about the intra-signal baseline-comparison ? 
 - [x] signal-comparison is finished already...
