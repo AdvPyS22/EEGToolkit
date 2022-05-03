@@ -165,6 +165,11 @@ def plot_signal(
     make_legend : bool
         Generates a legend for the plot.
 
+    Returns
+    -----
+    pvalues : np.ndarray    
+        The p-value from pair-wise T-Test comparison between the 
+        signal and the baseline (if provided) at each signal position (timepoint).
     """
 
     # generate a new figure if no ax is specified
@@ -173,20 +178,23 @@ def plot_signal(
     else: 
         fig = None
 
-    _plot_(ax,
-           extracted_EEGData,
-           sampling_frequency,
-           start_sec,
-           stop_sec,
-           x_scale,
-           y_scale, 
-           baseline,
-           make_legend )
+    pvalues = _plot_(ax,
+                    extracted_EEGData,
+                    sampling_frequency,
+                    start_sec,
+                    stop_sec,
+                    x_scale,
+                    y_scale, 
+                    baseline,
+                    make_legend 
+                )
 
     # we show the figure only if no ax was provided
     # and thus no "bigger" figure is assembled elsewhere...
     if fig is not None:
         plt.show()
+    
+    return pvalues
 
 def difference_plot(extracted_EEGData_1:np.ndarray,
                     extracted_EEGData_2:np.ndarray,
@@ -236,6 +244,12 @@ def difference_plot(extracted_EEGData_1:np.ndarray,
     
     make_legend : bool
         Generates a legend for the plot.
+    
+    Returns
+    -----
+    pvalues : np.ndarray    
+        The p-value from pair-wise T-Test comparison between the 
+        two signals at each signal position (timepoint).
     """
 
     # generate a new figure if no ax is given
@@ -244,24 +258,24 @@ def difference_plot(extracted_EEGData_1:np.ndarray,
     else: 
         fig = None
 
-    _difference_plot_(ax,
-                      extracted_EEGData_1,
-                      extracted_EEGData_2,
-                      significance_level,
-                      sampling_frequency,
-                      start_sec,
-                      stop_sec,
-                      x_scale,
-                      y_scale,
-                      make_legend 
-                    )
+    pvalues = _difference_plot_(ax,
+                        extracted_EEGData_1,
+                        extracted_EEGData_2,
+                        significance_level,
+                        sampling_frequency,
+                        start_sec,
+                        stop_sec,
+                        x_scale,
+                        y_scale,
+                        make_legend 
+                        )
 
-    
     # we show the figure only if no ax was provided
     # and thus no "bigger" figure is assembled elsewhere...
     if fig is not None: 
         plt.show()
 
+    return pvalues
 
 def _plot_(
             ax, 
@@ -312,6 +326,7 @@ def _plot_(
 
     # if we have baseline data, we compare also to the baseline
     # and shade siginificantly different regions...
+    pvalues = None
     if baseline is not None:
 
         pvalues = compare_signals( extracted_EEGData, baseline )
@@ -371,6 +386,7 @@ def _plot_(
                             bbox_to_anchor = (1, -0.5),
                             frameon = False
                         )
+    return pvalues
 
 def _difference_plot_(ax,
                       extracted_EEGData_1:np.ndarray,
@@ -458,6 +474,7 @@ def _difference_plot_(ax,
                             bbox_to_anchor = (1, -0.5),
                             frameon = False
                         )
+    return pvalues
 
 def _shade_singificant_regions(ax, significance_level : float , pvalues : np.ndarray , xvalues : np.ndarray , ylim : tuple ):
     """
