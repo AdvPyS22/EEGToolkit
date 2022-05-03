@@ -706,7 +706,7 @@ def main():
 
 if __name__ == "__main__":
 
-    test_mode = True
+    test_mode = False
     if not test_mode:
         main()
     else: 
