@@ -62,7 +62,10 @@ class EEGData():
         self.read( signal_path = signal_path, event_path = event_path )    
 
         # now setup the frames for the events 
-        self.n_frames = len(self.signal)
+        self._n_frames = len(self.signal)
+
+        # this will setup self._events which is a
+        # dictionary of event identifiers : number of repeated measurements
         self._set_n_events()
 
         # setup a _data argument for the 
@@ -88,6 +91,11 @@ class EEGData():
         # from the extracted timepoints...
         self._baseline = None
 
+        # setup a dictionary to store the p-values of pair-wise comparison
+        # between either two signals or a signal with it's baseline.
+        # keys will be tuples of signal1, signal2, for baseline comparison
+        # signal1 = signal2...
+        self._pvalues = {}
 
     def read( self, signal_path : str = None , event_path : str = None ) -> None: 
         """
@@ -143,8 +151,7 @@ class EEGData():
                 events = self._read_datafile( event_path )
 
             # now save
-            self.events = events
-
+            self._events_data = events
 
     def extract(self,
                 start_sec:float,
@@ -190,7 +197,7 @@ class EEGData():
         if event_type is None:
 
             # get all events
-            events_to_extract = self.n_events.keys()
+            events_to_extract = self._events.keys()
 
             # extract each type from the loaded data
             data = [ 
@@ -306,6 +313,63 @@ class EEGData():
         # plt.tight_layout()
         # plt.show()
 
+
+    def pvalues( self, event1 : int, event2 : int = None ):
+        """
+        Gets the p-value np.ndarray for each signal timepoint from a comparison of 
+        either two separate event types or one event with its baseline. 
+
+        Parameters
+        ----------
+        event1 : int
+            The numeric event identifier of the (first) signal to get.
+            If `None` is provided, the entire dictionary of pvalues is returned.
+
+        event2 : int
+            The numeric event identifier of the (second) signal from the comparison to get.
+            If `None` is provided then the first signals comparison to it's baseline will be 
+            returned (if baseline comparison was performed).
+        
+        Returns
+        -------
+        pvalues : np.ndarray or dict
+            An np.ndarray of p-values from a given comparison.
+        """
+
+        if event1 is None: 
+            return self._pvalues
+
+        if event2 is None:
+            key = (event1, event1)
+        else: 
+            key = (event1, event2)
+        pvalues = self._pvalues.get( key, None )
+        return pvalues 
+
+    @property
+    def events( self ):
+        """
+        Returns 
+        -------
+        list
+            A list of all different event types from from the loaded metadata.
+        """
+        return list( self._events.keys() )
+
+    @property
+    def timeframe( self ):
+        """
+        Returns
+        -------
+        tuple   
+            The used timeframe for event data extraction.
+            This consists of the pre-trigger and post-trigger
+            time offsets in seconds.
+        """
+        return ( self._start_sec, self._stop_sec )
+
+
+
     def summary(self,
                 x_scale:float,
                 y_scale:float,
@@ -352,7 +416,7 @@ class EEGData():
             self.baseline() 
 
         data = list( self._data ) 
-        signals = list(self.n_events.keys())
+        signals = list(self._events.keys())
         n = len(data)
 
         # generate a new figure
@@ -361,14 +425,14 @@ class EEGData():
         # setup a baseline reference, either with the computed
         # baselines or None ...
         baseline = self._baseline if self._baseline is not None else [ None for i in range(n) ]
-
+    
         # now first plot the individual signals
         # on their own on diagonal plots
         for i in range(n):
 
             # only the last subplot should make a legend
             make_legend = i == n-1 
-            plot_signal(
+            p = plot_signal(
                     data[i], 
                     self.sampling_frequency, 
                     start_sec, stop_sec, 
@@ -378,6 +442,11 @@ class EEGData():
                     ax = ax[i,i] )
                 
             ax[i,i].set_title(f"Signal {signals[i]}")
+
+            # if we got a baseline to compare to we also want to 
+            # store the resulting p-values
+            if p is not None: 
+                self._pvalues[ (i,i) ] = p 
 
             # hide all "left-over" subplots from the layout
             # i.e. hide the upper-right half of the figure...
@@ -392,7 +461,7 @@ class EEGData():
             # only the last plot shall make a legend
             make_legend = i == n-1 and j == i-1 
 
-            difference_plot( 
+            p = difference_plot( 
                                 data[i], 
                                 data[j], 
                                 self.sampling_frequency, 
@@ -403,6 +472,10 @@ class EEGData():
                                 ax = ax[i,j]
                             )
             ax[i,j].set_title(f"Signals: {signals[j]} vs {signals[i]}")
+
+            # we also want to store the resulting p-values of the 
+            # signal comparison
+            self._pvalues[ ( signals[j],signals[i] ) ] = p
 
         fig.tight_layout()
         
@@ -426,7 +499,7 @@ class EEGData():
         # the events
         firing_slices = [
                             slice( event[0]+start_frame, event[0]+stop_frame ) 
-                            for event in self.events 
+                            for event in self._events_data 
                             if event[1] == event_type
                     ]
 
@@ -450,8 +523,8 @@ class EEGData():
         found in the events data.
         """
 
-        event_types = {event[1] for event in self.events}
-        self.n_events = {event_type: len([event for event in self.events if event[1] == event_type]) for event_type in event_types}            
+        event_types = {event[1] for event in self._events_data}
+        self._events = {event_type: len([event for event in self._events_data if event[1] == event_type]) for event_type in event_types}            
 
     def _check_sanity(self, signal_path, event_path, sampling_frequency):
         """
@@ -553,7 +626,15 @@ def main():
         --output "./test.png"
     """
 
-    parser = argparse.ArgumentParser(prefix_chars='-')
+    descr1 = """
+    This script takes in two data files of EEG signal data and accompanying event-trigger metadata. It performs intra- and inter-signal type comparisons using pair-wise T-Tests over the time-series, highlighting significantly different stretches and producing a summary figure. 
+    """
+    descr2 = f"""
+    Accepted input file types are {supported_filetypes}. The EEG-signal datafile must specify a 1D array of measurements, while the trigger metadata file must specify
+    a 2D array (2 columns) of trigger time points and event classifier labels (numerically encoded). 
+    """
+    
+    parser = argparse.ArgumentParser( prefix_chars = "-", description = descr1, epilog = descr2 )
     parser.add_argument(
                             "--eeg_path", "--eeg", 
                             type=str, required=True, 
@@ -562,7 +643,7 @@ def main():
     parser.add_argument(
                             "--event_path", "--event", 
                             type=str, required=True,
-                            help = "A file containing event metadata for the signal file. Supported filetypes are {supported_filetypes}"
+                            help = f"A file containing event metadata for the signal file. Supported filetypes are {supported_filetypes}"
                     )
     parser.add_argument(
                             "--output", "-o", 
@@ -589,6 +670,12 @@ def main():
                             type=float, required=True,
                             help = "The downstream time-padding for event extraction (in seconds)."
                     )
+    
+    parser.add_argument(
+                            "--baseline", "-b", 
+                            type=bool, default = True,
+                            help = "Perform baseline comparison for each event type using the same significance threshold as used for inter-signal comparisons. Will be performed by default."
+                    )
     parser.add_argument(
                             "--x_scale", "-x", 
                             type=float, default = 1000,
@@ -605,6 +692,8 @@ def main():
     # the main program (reading datafiles, extracting, and summarizing)
     data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
     data.extract( args.start_sec, args.stop_sec )
+    if args.baseline:
+        data.baseline()
     data.summary(
                     significance_level = args.p_value,
                     x_scale = args.x_scale,
@@ -617,7 +706,7 @@ def main():
 
 if __name__ == "__main__":
 
-    test_mode = False
+    test_mode = True
     if not test_mode:
         main()
     else: 
@@ -631,4 +720,3 @@ if __name__ == "__main__":
         e.baseline()
         e.summary( 1000, 1000, output = "./test.pdf" )
         plt.show()
-        print( e.events )
