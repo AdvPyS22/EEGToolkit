@@ -627,14 +627,24 @@ def main():
     """
 
     descr1 = """
-    This script takes in two data files of EEG signal data and accompanying event-trigger metadata. It performs intra- and inter-signal type comparisons using pair-wise T-Tests over the time-series, highlighting significantly different stretches and producing a summary figure. 
+
+-----------------------------------------------------
+▒█▀▀▀ ▒█▀▀▀ ▒█▀▀█ ▀▀█▀▀ █▀▀█ █▀▀█ █░░ ▒█░▄▀ ░▀░ ▀▀█▀▀
+▒█▀▀▀ ▒█▀▀▀ ▒█░▄▄ ░▒█░░ █░░█ █░░█ █░░ ▒█▀▄░ ▀█▀ ░░█░░
+▒█▄▄▄ ▒█▄▄▄ ▒█▄▄█ ░▒█░░ ▀▀▀▀ ▀▀▀▀ ▀▀▀ ▒█░▒█ ▀▀▀ ░░▀░░
+-----------------------------------------------------
+
+This script takes in two data files of EEG signal data and accompanying event-trigger metadata. It performs intra- and inter-signal type comparisons using pair-wise T-Tests over the time-series, highlighting significantly different stretches and producing a summary figure. 
     """
     descr2 = f"""
-    Accepted input file types are {supported_filetypes}. The EEG-signal datafile must specify a 1D array of measurements, while the trigger metadata file must specify
-    a 2D array (2 columns) of trigger time points and event classifier labels (numerically encoded). 
+
+Input Data
+----------
+Accepted input file types are {supported_filetypes}. The EEG-signal datafile must specify a 1D array of measurements, while the trigger metadata file must specify a 2D array (2 columns) of trigger time points and event classifier labels (numerically encoded). 
     """
     
-    parser = argparse.ArgumentParser( prefix_chars = "-", description = descr1, epilog = descr2 )
+    parser = argparse.ArgumentParser( prefix_chars = "-", 
+    formatter_class=argparse.RawDescriptionHelpFormatter,description = descr1, epilog = descr2 )
     parser.add_argument(
                             "--eeg_path", "--eeg", 
                             type=str, required=True, 
