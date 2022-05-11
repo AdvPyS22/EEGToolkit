@@ -6,7 +6,9 @@ describing event metadata as a 2D array, describing both the timepoints and the 
 
 """
 
-import os
+import subprocess
+import inspect
+import os 
 import argparse
 import numpy as np
 import pandas as pd
@@ -420,7 +422,8 @@ class EEGData():
         n = len(data)
 
         # generate a new figure
-        fig, ax = plt.subplots(n,n)
+        figsize = kwargs.pop( "figsize", ( 3*n,2*n ) )
+        fig, ax = plt.subplots(n,n, figsize = figsize )
 
         # setup a baseline reference, either with the computed
         # baselines or None ...
@@ -439,6 +442,7 @@ class EEGData():
                     x_scale, y_scale,
                     baseline = baseline[i],
                     make_legend = make_legend,
+                    significance_level = significance_level,
                     ax = ax[i,i] )
                 
             ax[i,i].set_title(f"Signal {signals[i]}")
@@ -647,12 +651,12 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
     formatter_class=argparse.RawDescriptionHelpFormatter,description = descr1, epilog = descr2 )
     parser.add_argument(
                             "--eeg_path", "--eeg", 
-                            type=str, required=True, 
+                            type=str,
                             help = f"A file containing EEG signal data. Supported filetypes are {supported_filetypes}" 
                     )
     parser.add_argument(
                             "--event_path", "--event", 
-                            type=str, required=True,
+                            type=str,
                             help = f"A file containing event metadata for the signal file. Supported filetypes are {supported_filetypes}"
                     )
     parser.add_argument(
@@ -662,7 +666,7 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                     )
     parser.add_argument(
                             "--sampling_frequency", "--freq", "-f", 
-                            type=float, required=True,
+                            type=float,
                             help = "The frequency at which the EEG signal data was recorded (in Hertz)."
                     )
     parser.add_argument(
@@ -672,12 +676,12 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                     )
     parser.add_argument(
                             "--start_sec", "--start", "-s", 
-                            type=float, required=True,
+                            type=float,
                             help = "The upstream time-padding for event extraction (in seconds)."
                     )
     parser.add_argument(
                             "--stop_sec", "--stop", "-e", 
-                            type=float, required=True,
+                            type=float,
                             help = "The downstream time-padding for event extraction (in seconds)."
                     )
     
@@ -696,23 +700,46 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                             type=float, default = 1000,
                             help = "A scaling factor for the signal-scale (y-values) from volts to some other unit. Default is 1000 (= millivolts)."
                     )
+    
+    parser.add_argument(
+                            "--viewer", "-i", 
+                            action="store_true",
+                            default = False,
+                            help = "Open the EEGToolKit Viewer GUI in a web browser."
+                    )
 
     args = parser.parse_args()
     
-    # the main program (reading datafiles, extracting, and summarizing)
-    data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
-    data.extract( args.start_sec, args.stop_sec )
-    if args.baseline:
-        data.baseline()
-    data.summary(
-                    significance_level = args.p_value,
-                    x_scale = args.x_scale,
-                    y_scale = args.y_scale,
-                    output = args.output
-                )
+    # if the viewer is being called then we want to just open the 
+    # viewer and nothing else
+    if args.viewer:
+        # first we need to get the relative location of the main.
+        # py file within the package. 
+        directory = os.path.dirname( 
+                                            inspect.getfile( plot_signal ) 
+                                        )
+        main_file = f"{directory}/main.py"
 
-    if args.output is not None: 
-        print( f"Output saved successfully to: '{args.output}'" ) 
+        # then we call the web interface
+        print( "Starting the \033[94mEEGToolKit \033[96mViewer" )
+        subprocess.run( f"streamlit run {main_file}", shell = True )
+    
+    else: 
+
+        # the main program (reading datafiles, extracting, and summarizing)
+        data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
+        data.extract( args.start_sec, args.stop_sec )
+        if args.baseline:
+            data.baseline()
+        data.summary(
+                        significance_level = args.p_value,
+                        x_scale = args.x_scale,
+                        y_scale = args.y_scale,
+                        output = args.output
+                    )
+
+        if args.output is not None: 
+            print( f"Output saved successfully to: '{args.output}'" ) 
 
 if __name__ == "__main__":
 

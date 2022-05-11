@@ -186,7 +186,8 @@ def plot_signal(
                     x_scale,
                     y_scale, 
                     baseline,
-                    make_legend 
+                    make_legend,
+                    significance_level = significance_level 
                 )
 
     # we show the figure only if no ax was provided
