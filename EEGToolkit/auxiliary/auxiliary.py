@@ -2,7 +2,7 @@
 Auxiliary functions to work within the streamlit environment
 """
 
-from EEGData import EEGData, supported_filetypes
+from ..EEGData import EEGData, supported_filetypes
 import streamlit as st 
 from copy import deepcopy
 import os 

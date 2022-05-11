@@ -4,10 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>EEGToolkit API documentation</title>
-<meta name="description" content="This package is designed for quick analysis of EEG data for
-event reaction-time delay experiments. It works with separate data
-files for EEG signal …" />
+<title>EEGToolkit.auxiliary API documentation</title>
+<meta name="description" content="" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -21,109 +19,22 @@ files for EEG signal …" />
 <main>
 <article id="content">
 <header>
-<h1 class="title">Package <code>EEGToolkit</code></h1>
+<h1 class="title">Module <code>EEGToolkit.auxiliary</code></h1>
 </header>
 <section id="section-intro">
-<p>This package is designed for quick analysis of EEG data for
-event reaction-time delay experiments. It works with separate data
-files for EEG signal data (in volts) and event metadata (describing event
-timepoints). </p>
-<p>Supported file types are:
-- <code>npy</code>
-- <code>txt</code>
-( space-separated for events datafiles )
-- <code>tsv</code>
-- <code>csv</code>
-(both <code>,</code> and <code>;</code> separated )
-</p>
-<h3 id="example-usage">Example Usage</h3>
-<p>To use this module for data analysis, only three steps are necessary,
-(1st) setup of the <code><a title="EEGToolkit.EEGData" href="EEGData/index.html">EEGToolkit.EEGData</a></code> object, (2nd) event data extraction, and (3rd)
-data summary (which performs signal comparison).</p>
-<pre><code class="language-python"># setting up the EEGData with some datafiles
-eeg = EEGData( eeg_path = &quot;data/eeg.npy&quot;, event_path = &quot;data/events.npy&quot;, sampling_frequency = 500 )
-
-# extract the events data
-data.extract( start_sec = -0.3 , stop_sec = 1 )
-
-# summarize and pair-wise compare event-signal types.
-data.summary(
-                significance_level = 0.05,
-                x_scale = 1000,
-                y_scale = 10000,
-            )
-</code></pre>
-<h3 id="cli">CLI</h3>
-<p>This module additionally offers a CLI to directly call the full analysis procedure from the terminal.</p>
-<pre><code class="language-bash">python3 EEGData.py --eeg &quot;./data/eeg.npy&quot; --event &quot;./data/events.npy&quot; --sampling_frequency 500 --p_value 0.05 --start_sec -0.3 --stop_sec 1.0 --x_scale 1000 --y_scale 10000 --output &quot;./test_output.pdf&quot;
-</code></pre>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
-<pre><code class="python">&#34;&#34;&#34;
-
-This package is designed for quick analysis of EEG data for 
-event reaction-time delay experiments. It works with separate data
-files for EEG signal data (in volts) and event metadata (describing event 
-timepoints). 
-
-Supported file types are:
-- `npy`
-- `txt`     ( space-separated for events datafiles )
-- `tsv`
-- `csv`     (both `,` and `;` separated )   
-
-### Example Usage
-To use this module for data analysis, only three steps are necessary,
-(1st) setup of the `EEGData` object, (2nd) event data extraction, and (3rd)
-data summary (which performs signal comparison).
-
-```python
-# setting up the EEGData with some datafiles
-eeg = EEGData( eeg_path = &#34;data/eeg.npy&#34;, event_path = &#34;data/events.npy&#34;, sampling_frequency = 500 )
-
-# extract the events data
-data.extract( start_sec = -0.3 , stop_sec = 1 )
-
-# summarize and pair-wise compare event-signal types.
-data.summary(
-                significance_level = 0.05,
-                x_scale = 1000,
-                y_scale = 10000,
-            )
-```
-
-### CLI 
-This module additionally offers a CLI to directly call the full analysis procedure from the terminal.
-
-```bash
-python3 EEGData.py --eeg &#34;./data/eeg.npy&#34; --event &#34;./data/events.npy&#34; --sampling_frequency 500 --p_value 0.05 --start_sec -0.3 --stop_sec 1.0 --x_scale 1000 --y_scale 10000 --output &#34;./test_output.pdf&#34;
-```
-&#34;&#34;&#34;
-from .EEGData import *
-from .EEGStats import *</code></pre>
+<pre><code class="python">from .auxiliary import *</code></pre>
 </details>
 </section>
 <section>
 <h2 class="section-title" id="header-submodules">Sub-modules</h2>
 <dl>
-<dt><code class="name"><a title="EEGToolkit.EEGData" href="EEGData/index.html">EEGToolkit.EEGData</a></code></dt>
+<dt><code class="name"><a title="EEGToolkit.auxiliary.auxiliary" href="auxiliary.html">EEGToolkit.auxiliary.auxiliary</a></code></dt>
 <dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="EEGToolkit.EEGStats" href="EEGStats/index.html">EEGToolkit.EEGStats</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="EEGToolkit.auxiliary" href="auxiliary/index.html">EEGToolkit.auxiliary</a></code></dt>
-<dd>
-<div class="desc"></div>
-</dd>
-<dt><code class="name"><a title="EEGToolkit.main" href="main.html">EEGToolkit.main</a></code></dt>
-<dd>
-<div class="desc"><p>This script defines an interactive
-web-app for the EEGData package.</p></div>
+<div class="desc"><p>Auxiliary functions to work within the streamlit environment</p></div>
 </dd>
 </dl>
 </section>
@@ -137,18 +48,17 @@ web-app for the EEGData package.</p></div>
 <nav id="sidebar">
 <h1>Index</h1>
 <div class="toc">
-<ul>
-<li><a href="#example-usage">Example Usage</a></li>
-<li><a href="#cli">CLI</a></li>
-</ul>
+<ul></ul>
 </div>
 <ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="EEGToolkit" href="../index.html">EEGToolkit</a></code></li>
+</ul>
+</li>
 <li><h3><a href="#header-submodules">Sub-modules</a></h3>
 <ul>
-<li><code><a title="EEGToolkit.EEGData" href="EEGData/index.html">EEGToolkit.EEGData</a></code></li>
-<li><code><a title="EEGToolkit.EEGStats" href="EEGStats/index.html">EEGToolkit.EEGStats</a></code></li>
-<li><code><a title="EEGToolkit.auxiliary" href="auxiliary/index.html">EEGToolkit.auxiliary</a></code></li>
-<li><code><a title="EEGToolkit.main" href="main.html">EEGToolkit.main</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.auxiliary" href="auxiliary.html">EEGToolkit.auxiliary.auxiliary</a></code></li>
 </ul>
 </li>
 </ul>

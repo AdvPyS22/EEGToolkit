@@ -13,7 +13,7 @@ import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from EEGStats import plot_signal, difference_plot
+from EEGToolkit.EEGStats import plot_signal, difference_plot
 
 supported_filetypes = [ "npy", "tsv", "csv", "txt" ]
 class EEGData():
@@ -158,7 +158,8 @@ class EEGData():
     def extract(self,
                 start_sec:float,
                 stop_sec:float,
-                event_type : ( int or tuple or list or np.ndarray ) = None) -> np.ndarray:
+                event_type : ( int or tuple or list or np.ndarray ) = None, 
+                **kwargs ) -> np.ndarray:
         """
         Extracts data for a specific (set of) event(s) from the loaded data. 
         And returns the data as numpy ndarrays (or a list thereof, in case of 
@@ -718,6 +719,7 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
         directory = os.path.dirname( 
                                             inspect.getfile( plot_signal ) 
                                         )
+        directory = os.path.dirname( directory )
         main_file = f"{directory}/main.py"
 
         # then we call the web interface

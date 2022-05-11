@@ -4,9 +4,9 @@ web-app for the EEGData package.
 """
 
 import streamlit as st 
-from EEGData import EEGData, supported_filetypes
+from EEGToolkit.EEGData import supported_filetypes
 import pandas as pd
-from auxiliary import Session, stEEGData
+from EEGToolkit.auxiliary import Session, stEEGData
 import os
 
 session = Session()

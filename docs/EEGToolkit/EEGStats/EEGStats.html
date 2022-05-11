@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
-<title>EEGToolkit.EEGStats API documentation</title>
+<title>EEGToolkit.EEGStats.EEGStats API documentation</title>
 <meta name="description" content="Computes time-point-wise the mean and SEM values of EEG data stored in numpy ndarrays." />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
@@ -19,7 +19,7 @@
 <main>
 <article id="content">
 <header>
-<h1 class="title">Module <code>EEGToolkit.EEGStats</code></h1>
+<h1 class="title">Module <code>EEGToolkit.EEGStats.EEGStats</code></h1>
 </header>
 <section id="section-intro">
 <p>Computes time-point-wise the mean and SEM values of EEG data stored in numpy ndarrays.</p>
@@ -566,7 +566,7 @@ def _scale_yboundries(y_scale, max_y, min_y, pad = 1 ):
 <section>
 <h2 class="section-title" id="header-functions">Functions</h2>
 <dl>
-<dt id="EEGToolkit.EEGStats.compare_signals"><code class="name flex">
+<dt id="EEGToolkit.EEGStats.EEGStats.compare_signals"><code class="name flex">
 <span>def <span class="ident">compare_signals</span></span>(<span>extracted_EEGData_1: numpy.ndarray, extracted_EEGData_2: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
@@ -630,7 +630,7 @@ difference between Signals 1 and 2 at each position.</dd>
     return pvalues</code></pre>
 </details>
 </dd>
-<dt id="EEGToolkit.EEGStats.difference_plot"><code class="name flex">
+<dt id="EEGToolkit.EEGStats.EEGStats.difference_plot"><code class="name flex">
 <span>def <span class="ident">difference_plot</span></span>(<span>extracted_EEGData_1: numpy.ndarray, extracted_EEGData_2: numpy.ndarray, sampling_frequency: float, start_sec: float, stop_sec: float, significance_level: float = 0.05, x_scale=1000, y_scale=1000, make_legend=False, ax=None) ‑> None</span>
 </code></dt>
 <dd>
@@ -756,7 +756,7 @@ two signals at each signal position (timepoint).</dd>
     return pvalues</code></pre>
 </details>
 </dd>
-<dt id="EEGToolkit.EEGStats.mean"><code class="name flex">
+<dt id="EEGToolkit.EEGStats.EEGStats.mean"><code class="name flex">
 <span>def <span class="ident">mean</span></span>(<span>extracted_EEGData: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
@@ -797,7 +797,7 @@ with <code>m</code> repeated datasets and <code>n</code> entries per set along a
     return means</code></pre>
 </details>
 </dd>
-<dt id="EEGToolkit.EEGStats.plot_signal"><code class="name flex">
+<dt id="EEGToolkit.EEGStats.EEGStats.plot_signal"><code class="name flex">
 <span>def <span class="ident">plot_signal</span></span>(<span>extracted_EEGData: numpy.ndarray, sampling_frequency: float, start_sec: float, stop_sec: float, x_scale=1000, y_scale=1000, baseline: numpy.ndarray = None, significance_level: float = 0.05, make_legend=False, ax=None) ‑> None</span>
 </code></dt>
 <dd>
@@ -926,7 +926,7 @@ signal and the baseline (if provided) at each signal position (timepoint).</dd>
     return pvalues</code></pre>
 </details>
 </dd>
-<dt id="EEGToolkit.EEGStats.sem"><code class="name flex">
+<dt id="EEGToolkit.EEGStats.EEGStats.sem"><code class="name flex">
 <span>def <span class="ident">sem</span></span>(<span>extracted_EEGData: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
@@ -985,16 +985,16 @@ datasets and <code>n</code> entries per set along axis 1
 <ul id="index">
 <li><h3>Super-module</h3>
 <ul>
-<li><code><a title="EEGToolkit" href="index.html">EEGToolkit</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats" href="index.html">EEGToolkit.EEGStats</a></code></li>
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
-<li><code><a title="EEGToolkit.EEGStats.compare_signals" href="#EEGToolkit.EEGStats.compare_signals">compare_signals</a></code></li>
-<li><code><a title="EEGToolkit.EEGStats.difference_plot" href="#EEGToolkit.EEGStats.difference_plot">difference_plot</a></code></li>
-<li><code><a title="EEGToolkit.EEGStats.mean" href="#EEGToolkit.EEGStats.mean">mean</a></code></li>
-<li><code><a title="EEGToolkit.EEGStats.plot_signal" href="#EEGToolkit.EEGStats.plot_signal">plot_signal</a></code></li>
-<li><code><a title="EEGToolkit.EEGStats.sem" href="#EEGToolkit.EEGStats.sem">sem</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats.EEGStats.compare_signals" href="#EEGToolkit.EEGStats.EEGStats.compare_signals">compare_signals</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats.EEGStats.difference_plot" href="#EEGToolkit.EEGStats.EEGStats.difference_plot">difference_plot</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats.EEGStats.mean" href="#EEGToolkit.EEGStats.EEGStats.mean">mean</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats.EEGStats.plot_signal" href="#EEGToolkit.EEGStats.EEGStats.plot_signal">plot_signal</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats.EEGStats.sem" href="#EEGToolkit.EEGStats.EEGStats.sem">sem</a></code></li>
 </ul>
 </li>
 </ul>
