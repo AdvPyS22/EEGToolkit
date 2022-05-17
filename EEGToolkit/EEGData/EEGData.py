@@ -5,15 +5,25 @@ It works with two separate input datafiles, one storing the EEG signal itself as
 describing event metadata as a 2D array, describing both the timepoints and the type of event in two columns.
 
 """
+import sys
+import os 
 
 import subprocess
 import inspect
-import os 
 import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from EEGToolkit.EEGStats import plot_signal, difference_plot
+
+try:
+    from EEGToolkit.EEGStats import plot_signal, difference_plot
+except ImportError:
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(os.path.dirname(abspath))
+    sys.path.append(dname)
+
+    from EEGStats import plot_signal, difference_plot
+    
 
 supported_filetypes = [ "npy", "tsv", "csv", "txt" ]
 class EEGData():
