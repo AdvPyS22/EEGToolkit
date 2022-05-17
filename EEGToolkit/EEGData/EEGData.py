@@ -729,19 +729,29 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
     else: 
 
         # the main program (reading datafiles, extracting, and summarizing)
-        data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
-        data.extract( args.start_sec, args.stop_sec )
-        if args.baseline:
-            data.baseline()
-        data.summary(
-                        significance_level = args.p_value,
-                        x_scale = args.x_scale,
-                        y_scale = args.y_scale,
-                        output = args.output
-                    )
+        try:
+            data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
+            data.extract( args.start_sec, args.stop_sec )
+            if args.baseline:
+                data.baseline()
+            data.summary(
+                            significance_level = args.p_value,
+                            x_scale = args.x_scale,
+                            y_scale = args.y_scale,
+                            output = args.output
+                        )
 
-        if args.output is not None: 
-            print( f"Output saved successfully to: '{args.output}'" ) 
+            if args.output is not None: 
+                print( f"Output saved successfully to: '{args.output}'" )
+        except FileNotFoundError as e:
+            print(e)
+            return
+        except TypeError as e:
+            print(e)
+            return
+        except ValueError as e:
+            print(e)
+            return
 
 if __name__ == "__main__":
 
