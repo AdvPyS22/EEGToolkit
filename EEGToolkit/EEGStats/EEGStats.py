@@ -342,13 +342,7 @@ def _plot_(
         # add the shaded fillings for significantly different
         # timepoint areas
         signif_level = kwargs.pop( "significance_level", 0.05 )
-        _shade_singificant_regions(
-                                    ax, 
-                                    significance_level = signif_level, 
-                                    pvalues = pvalues, 
-                                    xvalues = x_values,
-                                    ylim = yvalues, 
-                                )
+        _shade_significant_regions(ax, significance_level=signif_level, pvalues=pvalues, xvalues=x_values, ylim=yvalues)
 
 
 
@@ -358,7 +352,7 @@ def _plot_(
     # and some axes formatting...
     ax.set_title("Average EEG Signal (Shaded area SEM)")
     ax.set_ylabel("Signal\namplitude")
-    ax.set_xlabel("Time relative to event")
+    ax.set_xlabel("Time relative to event (ms)")
     
     if make_legend:
         handles = [
@@ -430,13 +424,8 @@ def _difference_plot_(ax,
 
     # add the shaded fillings for significantly different
     # timepoint areas
-    _shade_singificant_regions(
-                                ax, 
-                                significance_level = significance_level, 
-                                pvalues = pvalues, 
-                                xvalues = x_values,
-                                ylim = yvalues, 
-                            )
+    _shade_significant_regions(ax, significance_level=significance_level, pvalues=pvalues, xvalues=x_values,
+                               ylim=yvalues)
 
     # plot scaled signals 1 and 2
     signal_1 = mean_1 * y_scale
@@ -451,7 +440,7 @@ def _difference_plot_(ax,
     # and some axes formatting...
     ax.set_title("Average EEG Signal (Shaded area significant regions)")
     ax.set_ylabel("Signal\namplitude")
-    ax.set_xlabel("Time relative to event")
+    ax.set_xlabel("Time relative to event (ms)")
 
     if make_legend: 
         # now add a custom legend
@@ -477,7 +466,7 @@ def _difference_plot_(ax,
                         )
     return pvalues
 
-def _shade_singificant_regions(ax, significance_level : float , pvalues : np.ndarray , xvalues : np.ndarray , ylim : tuple ):
+def _shade_significant_regions(ax, significance_level : float , pvalues : np.ndarray , xvalues : np.ndarray , ylim : tuple ):
     """
     Shades the background of regions (x-value ranges) where corresponding p-values
     are below a given significance level. 
