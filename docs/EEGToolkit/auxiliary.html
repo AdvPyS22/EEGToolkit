@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.10.0" />
+<title>EEGToolkit.auxiliary API documentation</title>
+<meta name="description" content="Auxiliary functions to work within the streamlit environment" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js" integrity="sha256-Uv3H6lx7dJmRfRvH8TH6kJD1TSK1aFcwgx+mdg3epi8=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>EEGToolkit.auxiliary</code></h1>
+</header>
+<section id="section-intro">
+<p>Auxiliary functions to work within the streamlit environment</p>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">&#34;&#34;&#34;
+Auxiliary functions to work within the streamlit environment
+&#34;&#34;&#34;
+
+from .EEGData import EEGData, supported_filetypes
+import streamlit as st 
+from copy import deepcopy
+import os 
+
+class Session:
+    &#34;&#34;&#34;
+    A class to handle storing values into and getting them from the streamlit session state.
+    &#34;&#34;&#34;
+    def __init__(self):
+
+        # a list of keys to include in the 
+        # export session dictionary
+        self._to_export = set()
+
+    def add( self, key, value, export = True ):
+        &#34;&#34;&#34;
+        Add a new item to the session but 
+        can also change an existing item.
+
+        Parameters
+        ----------
+        key : str
+            The key of the new item
+        value 
+            The value to store of the new item
+        export : bool
+            Wether or not to include the item in the exported session dictioanry.
+        &#34;&#34;&#34;
+        st.session_state[ key ] = value
+
+        if export: 
+            self._to_export.add( key )
+    
+    def set( self, key, value, export = True ):
+        &#34;&#34;&#34;
+        A synonym of `add`
+        &#34;&#34;&#34;
+        self.add( key, value, export )
+
+    def remove( self, key ):
+        &#34;&#34;&#34;
+        Remove an item from the session
+        &#34;&#34;&#34;
+        try: 
+            st.session_state.pop( key )
+            self._to_export.remove( key )
+        except: 
+            pass
+
+    def get( self, key, default = None, rm = False, copy = False ):
+        &#34;&#34;&#34;
+        Tries to get an item from the session 
+        and returns the default if this fails. 
+        If rm = True is set, the item will be 
+        removed after getting. 
+        If copy = True is set, it will return a deepcopy.
+        &#34;&#34;&#34;
+        try: 
+            value = st.session_state[ key ]
+            if copy: 
+                value = deepcopy(value)
+        except: 
+            value = default
+
+        if rm: 
+            self.remove( key )
+
+        return value 
+
+    def setup( self, key, value ):
+        &#34;&#34;&#34;
+        Stores an item to the session only if it&#39;s not already present.
+        &#34;&#34;&#34;
+        if not self.exists( key ):
+            self.add( key, value )
+
+    def exists( self, key ):
+        &#34;&#34;&#34;
+        Checks if an item is in the session. Returns True if so.
+        &#34;&#34;&#34;
+        verdict = key in st.session_state
+        return verdict
+    
+    def hasvalue( self, key ):
+        &#34;&#34;&#34;
+        Checks if an item is in the session and is also not None.
+        Returns True if both conditions are fulfilled.
+        &#34;&#34;&#34;
+        exists = self.exists( key )
+        not_none = self.get( key, None ) is not None
+        verdict = exists and not_none
+        return verdict
+
+    def export( self ):
+        &#34;&#34;&#34;
+        Exports a copy of the session state for better readablity wherein non-intelligible entries are removed. 
+        &#34;&#34;&#34;
+        to_export = st.session_state[ self._to_export ]
+        return to_export
+
+
+
+class stEEGData( EEGData ):
+    &#34;&#34;&#34;
+    A streamlit compatible version of EEGData
+    The primary difference here is that it replaces the original filepath variables
+    with filepath.name arguments to work with the string and not the UploadedFile objects.
+    &#34;&#34;&#34;
+    def __init__( self, *args, **kwargs ):
+        super().__init__(*args, **kwargs)
+        
+    def _filesuffix(self, filepath):
+        &#34;&#34;&#34;
+        Returns the suffix from a filepath
+        &#34;&#34;&#34;
+        suffix = os.path.basename( filepath.name )
+        suffix = suffix.split(&#34;.&#34;)[-1]
+        return suffix
+
+    def _csv_delimiter(self, filepath):
+        &#34;&#34;&#34;
+        Checks if a csv file is , or ; delimited and returns the 
+        correct delmiter to use...
+        &#34;&#34;&#34;
+        # open the file and read 
+        content = deepcopy(filepath).read().decode()
+
+        # check if a semicolon is present
+        # if so, we delimit at ; 
+        has_semicolon = &#34;;&#34; in content
+        delimiter = &#34;;&#34; if has_semicolon else &#34;,&#34;
+
+        return delimiter
+    
+    def _check_sanity(self, signal_path, event_path, sampling_frequency):
+        &#34;&#34;&#34;
+        Checks if valid data inputs were provided
+        &#34;&#34;&#34;
+
+        # check if the datafiles conform to suppored filetypes
+        fname = os.path.basename(signal_path.name)
+        if not any( [ fname.endswith(suffix) for suffix in supported_filetypes ] ):
+            suffix = fname.split(&#34;.&#34;)[-1]
+            raise TypeError( f&#34;The signal datafile could not be interpreted (&#39;.{suffix}&#39;), only {supported_filetypes} files are supported!&#34; )
+
+        fname = os.path.basename(event_path.name)
+        if not any( [ fname.endswith(suffix) for suffix in supported_filetypes ] ):
+            suffix = fname.split(&#34;.&#34;)[-1]
+            raise TypeError( f&#34;The event datafile could not be interpreted (&#39;.{suffix}&#39;), only {supported_filetypes} files are supported!&#34; )
+        
+        # check if the frequency is a positive number
+        if not sampling_frequency &gt; 0:
+            raise ValueError( f&#34;Sampling frequency {sampling_frequency} must be a positive value&#34; )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="EEGToolkit.auxiliary.Session"><code class="flex name class">
+<span>class <span class="ident">Session</span></span>
+</code></dt>
+<dd>
+<div class="desc"><p>A class to handle storing values into and getting them from the streamlit session state.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Session:
+    &#34;&#34;&#34;
+    A class to handle storing values into and getting them from the streamlit session state.
+    &#34;&#34;&#34;
+    def __init__(self):
+
+        # a list of keys to include in the 
+        # export session dictionary
+        self._to_export = set()
+
+    def add( self, key, value, export = True ):
+        &#34;&#34;&#34;
+        Add a new item to the session but 
+        can also change an existing item.
+
+        Parameters
+        ----------
+        key : str
+            The key of the new item
+        value 
+            The value to store of the new item
+        export : bool
+            Wether or not to include the item in the exported session dictioanry.
+        &#34;&#34;&#34;
+        st.session_state[ key ] = value
+
+        if export: 
+            self._to_export.add( key )
+    
+    def set( self, key, value, export = True ):
+        &#34;&#34;&#34;
+        A synonym of `add`
+        &#34;&#34;&#34;
+        self.add( key, value, export )
+
+    def remove( self, key ):
+        &#34;&#34;&#34;
+        Remove an item from the session
+        &#34;&#34;&#34;
+        try: 
+            st.session_state.pop( key )
+            self._to_export.remove( key )
+        except: 
+            pass
+
+    def get( self, key, default = None, rm = False, copy = False ):
+        &#34;&#34;&#34;
+        Tries to get an item from the session 
+        and returns the default if this fails. 
+        If rm = True is set, the item will be 
+        removed after getting. 
+        If copy = True is set, it will return a deepcopy.
+        &#34;&#34;&#34;
+        try: 
+            value = st.session_state[ key ]
+            if copy: 
+                value = deepcopy(value)
+        except: 
+            value = default
+
+        if rm: 
+            self.remove( key )
+
+        return value 
+
+    def setup( self, key, value ):
+        &#34;&#34;&#34;
+        Stores an item to the session only if it&#39;s not already present.
+        &#34;&#34;&#34;
+        if not self.exists( key ):
+            self.add( key, value )
+
+    def exists( self, key ):
+        &#34;&#34;&#34;
+        Checks if an item is in the session. Returns True if so.
+        &#34;&#34;&#34;
+        verdict = key in st.session_state
+        return verdict
+    
+    def hasvalue( self, key ):
+        &#34;&#34;&#34;
+        Checks if an item is in the session and is also not None.
+        Returns True if both conditions are fulfilled.
+        &#34;&#34;&#34;
+        exists = self.exists( key )
+        not_none = self.get( key, None ) is not None
+        verdict = exists and not_none
+        return verdict
+
+    def export( self ):
+        &#34;&#34;&#34;
+        Exports a copy of the session state for better readablity wherein non-intelligible entries are removed. 
+        &#34;&#34;&#34;
+        to_export = st.session_state[ self._to_export ]
+        return to_export</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="EEGToolkit.auxiliary.Session.add"><code class="name flex">
+<span>def <span class="ident">add</span></span>(<span>self, key, value, export=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Add a new item to the session but
+can also change an existing item.</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>key</code></strong> :&ensp;<code>str</code></dt>
+<dd>The key of the new item</dd>
+<dt>value</dt>
+<dt>The value to store of the new item</dt>
+<dt><strong><code>export</code></strong> :&ensp;<code>bool</code></dt>
+<dd>Wether or not to include the item in the exported session dictioanry.</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def add( self, key, value, export = True ):
+    &#34;&#34;&#34;
+    Add a new item to the session but 
+    can also change an existing item.
+
+    Parameters
+    ----------
+    key : str
+        The key of the new item
+    value 
+        The value to store of the new item
+    export : bool
+        Wether or not to include the item in the exported session dictioanry.
+    &#34;&#34;&#34;
+    st.session_state[ key ] = value
+
+    if export: 
+        self._to_export.add( key )</code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.exists"><code class="name flex">
+<span>def <span class="ident">exists</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if an item is in the session. Returns True if so.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def exists( self, key ):
+    &#34;&#34;&#34;
+    Checks if an item is in the session. Returns True if so.
+    &#34;&#34;&#34;
+    verdict = key in st.session_state
+    return verdict</code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.export"><code class="name flex">
+<span>def <span class="ident">export</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Exports a copy of the session state for better readablity wherein non-intelligible entries are removed.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def export( self ):
+    &#34;&#34;&#34;
+    Exports a copy of the session state for better readablity wherein non-intelligible entries are removed. 
+    &#34;&#34;&#34;
+    to_export = st.session_state[ self._to_export ]
+    return to_export</code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.get"><code class="name flex">
+<span>def <span class="ident">get</span></span>(<span>self, key, default=None, rm=False, copy=False)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Tries to get an item from the session
+and returns the default if this fails.
+If rm = True is set, the item will be
+removed after getting.
+If copy = True is set, it will return a deepcopy.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get( self, key, default = None, rm = False, copy = False ):
+    &#34;&#34;&#34;
+    Tries to get an item from the session 
+    and returns the default if this fails. 
+    If rm = True is set, the item will be 
+    removed after getting. 
+    If copy = True is set, it will return a deepcopy.
+    &#34;&#34;&#34;
+    try: 
+        value = st.session_state[ key ]
+        if copy: 
+            value = deepcopy(value)
+    except: 
+        value = default
+
+    if rm: 
+        self.remove( key )
+
+    return value </code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.hasvalue"><code class="name flex">
+<span>def <span class="ident">hasvalue</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Checks if an item is in the session and is also not None.
+Returns True if both conditions are fulfilled.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def hasvalue( self, key ):
+    &#34;&#34;&#34;
+    Checks if an item is in the session and is also not None.
+    Returns True if both conditions are fulfilled.
+    &#34;&#34;&#34;
+    exists = self.exists( key )
+    not_none = self.get( key, None ) is not None
+    verdict = exists and not_none
+    return verdict</code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.remove"><code class="name flex">
+<span>def <span class="ident">remove</span></span>(<span>self, key)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Remove an item from the session</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def remove( self, key ):
+    &#34;&#34;&#34;
+    Remove an item from the session
+    &#34;&#34;&#34;
+    try: 
+        st.session_state.pop( key )
+        self._to_export.remove( key )
+    except: 
+        pass</code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.set"><code class="name flex">
+<span>def <span class="ident">set</span></span>(<span>self, key, value, export=True)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A synonym of <code>add</code></p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def set( self, key, value, export = True ):
+    &#34;&#34;&#34;
+    A synonym of `add`
+    &#34;&#34;&#34;
+    self.add( key, value, export )</code></pre>
+</details>
+</dd>
+<dt id="EEGToolkit.auxiliary.Session.setup"><code class="name flex">
+<span>def <span class="ident">setup</span></span>(<span>self, key, value)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Stores an item to the session only if it's not already present.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def setup( self, key, value ):
+    &#34;&#34;&#34;
+    Stores an item to the session only if it&#39;s not already present.
+    &#34;&#34;&#34;
+    if not self.exists( key ):
+        self.add( key, value )</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="EEGToolkit.auxiliary.stEEGData"><code class="flex name class">
+<span>class <span class="ident">stEEGData</span></span>
+<span>(</span><span>*args, **kwargs)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>A streamlit compatible version of EEGData
+The primary difference here is that it replaces the original filepath variables
+with filepath.name arguments to work with the string and not the UploadedFile objects.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class stEEGData( EEGData ):
+    &#34;&#34;&#34;
+    A streamlit compatible version of EEGData
+    The primary difference here is that it replaces the original filepath variables
+    with filepath.name arguments to work with the string and not the UploadedFile objects.
+    &#34;&#34;&#34;
+    def __init__( self, *args, **kwargs ):
+        super().__init__(*args, **kwargs)
+        
+    def _filesuffix(self, filepath):
+        &#34;&#34;&#34;
+        Returns the suffix from a filepath
+        &#34;&#34;&#34;
+        suffix = os.path.basename( filepath.name )
+        suffix = suffix.split(&#34;.&#34;)[-1]
+        return suffix
+
+    def _csv_delimiter(self, filepath):
+        &#34;&#34;&#34;
+        Checks if a csv file is , or ; delimited and returns the 
+        correct delmiter to use...
+        &#34;&#34;&#34;
+        # open the file and read 
+        content = deepcopy(filepath).read().decode()
+
+        # check if a semicolon is present
+        # if so, we delimit at ; 
+        has_semicolon = &#34;;&#34; in content
+        delimiter = &#34;;&#34; if has_semicolon else &#34;,&#34;
+
+        return delimiter
+    
+    def _check_sanity(self, signal_path, event_path, sampling_frequency):
+        &#34;&#34;&#34;
+        Checks if valid data inputs were provided
+        &#34;&#34;&#34;
+
+        # check if the datafiles conform to suppored filetypes
+        fname = os.path.basename(signal_path.name)
+        if not any( [ fname.endswith(suffix) for suffix in supported_filetypes ] ):
+            suffix = fname.split(&#34;.&#34;)[-1]
+            raise TypeError( f&#34;The signal datafile could not be interpreted (&#39;.{suffix}&#39;), only {supported_filetypes} files are supported!&#34; )
+
+        fname = os.path.basename(event_path.name)
+        if not any( [ fname.endswith(suffix) for suffix in supported_filetypes ] ):
+            suffix = fname.split(&#34;.&#34;)[-1]
+            raise TypeError( f&#34;The event datafile could not be interpreted (&#39;.{suffix}&#39;), only {supported_filetypes} files are supported!&#34; )
+        
+        # check if the frequency is a positive number
+        if not sampling_frequency &gt; 0:
+            raise ValueError( f&#34;Sampling frequency {sampling_frequency} must be a positive value&#34; )</code></pre>
+</details>
+<h3>Ancestors</h3>
+<ul class="hlist">
+<li><a title="EEGToolkit.EEGData.EEGData" href="EEGData.html#EEGToolkit.EEGData.EEGData">EEGData</a></li>
+</ul>
+<h3>Inherited members</h3>
+<ul class="hlist">
+<li><code><b><a title="EEGToolkit.EEGData.EEGData" href="EEGData.html#EEGToolkit.EEGData.EEGData">EEGData</a></b></code>:
+<ul class="hlist">
+<li><code><a title="EEGToolkit.EEGData.EEGData.baseline" href="EEGData.html#EEGToolkit.EEGData.EEGData.baseline">baseline</a></code></li>
+<li><code><a title="EEGToolkit.EEGData.EEGData.events" href="EEGData.html#EEGToolkit.EEGData.EEGData.events">events</a></code></li>
+<li><code><a title="EEGToolkit.EEGData.EEGData.extract" href="EEGData.html#EEGToolkit.EEGData.EEGData.extract">extract</a></code></li>
+<li><code><a title="EEGToolkit.EEGData.EEGData.pvalues" href="EEGData.html#EEGToolkit.EEGData.EEGData.pvalues">pvalues</a></code></li>
+<li><code><a title="EEGToolkit.EEGData.EEGData.read" href="EEGData.html#EEGToolkit.EEGData.EEGData.read">read</a></code></li>
+<li><code><a title="EEGToolkit.EEGData.EEGData.summary" href="EEGData.html#EEGToolkit.EEGData.EEGData.summary">summary</a></code></li>
+<li><code><a title="EEGToolkit.EEGData.EEGData.timeframe" href="EEGData.html#EEGToolkit.EEGData.EEGData.timeframe">timeframe</a></code></li>
+</ul>
+</li>
+</ul>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="EEGToolkit" href="index.html">EEGToolkit</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="EEGToolkit.auxiliary.Session" href="#EEGToolkit.auxiliary.Session">Session</a></code></h4>
+<ul class="two-column">
+<li><code><a title="EEGToolkit.auxiliary.Session.add" href="#EEGToolkit.auxiliary.Session.add">add</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.exists" href="#EEGToolkit.auxiliary.Session.exists">exists</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.export" href="#EEGToolkit.auxiliary.Session.export">export</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.get" href="#EEGToolkit.auxiliary.Session.get">get</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.hasvalue" href="#EEGToolkit.auxiliary.Session.hasvalue">hasvalue</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.remove" href="#EEGToolkit.auxiliary.Session.remove">remove</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.set" href="#EEGToolkit.auxiliary.Session.set">set</a></code></li>
+<li><code><a title="EEGToolkit.auxiliary.Session.setup" href="#EEGToolkit.auxiliary.Session.setup">setup</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="EEGToolkit.auxiliary.stEEGData" href="#EEGToolkit.auxiliary.stEEGData">stEEGData</a></code></h4>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc" title="pdoc: Python API documentation generator"><cite>pdoc</cite> 0.10.0</a>.</p>
+</footer>
+</body>
+</html>
