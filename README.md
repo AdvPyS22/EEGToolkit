@@ -1,6 +1,56 @@
 # AP-EEG
 
 ## Project description
+This package offers a quick way to analyse EEG data for reaction time-delay experiments. The package comes not just with an API, but additionally with both a direct command-line interface as well as a web-app based graphical user interface. 
+
+Two types of datafiles are required to run: one with the raw EEG signal data, and one with meta data about the timepoints of different types of events. Supported filetypes are `csv`, `txt`, `tsv`, and `npy`. 
+
+The output is a summary figure that compares the EEG signal of different event types between each other as well as for each event against the baseline through a position-wise t-test, and highlights significant differences in signal responses. 
+
+### Example Usage
+#### CLI
+```bash
+EEGToolkit  --eeg ./data/eeg.txt
+            --event ./data/events.tsv 
+            # the frequency at which data was recorded
+            -f 500 
+            # start and end of the time 
+            # window around each event timepoint
+            -s -0.5 -e 1.2 
+```
+#### GUI
+```bash
+EEGToolkit --viewer
+# or 
+EEGToolkit -i 
+```
+#### API
+```python
+import EEGToolkit as eeg
+
+# setup the EEGData object
+e = eeg.EEGData( 
+                    signal_path = "./data/eeg.txt", 
+                    event_path = "./data/events.tsv", 
+                    sampling_frequency = 500 
+                )
+
+# extract event time-windows
+e.extract( start_sec = -0.5, stop_sec = 1.2 )
+
+# perform baseline comparison for each signal
+e.baseline()
+
+# change the labelling scales of the data
+timescale = 1000 # milliseconds
+signalscale = 1000 # millivolts
+
+# generate a summary figure
+e.summary( x_scale = timescale, y_scale = signalscale )
+```
+
+
+
 > ## EEG data analysis
 > Students who choose this task ill be provided with the raw EEG recording of one channel, sampled at $500 [Hz]$ which was recorded from a participant presented with auditory stimuli. The students will also receive an events file describing when during the recording one out of two possible sounds were presented to the subject.
 > ### Task 1

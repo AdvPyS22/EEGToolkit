@@ -730,7 +730,7 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                                             inspect.getfile( plot_signal ) 
                                         )
         directory = os.path.dirname( directory )
-        main_file = f"{directory}/main.py"
+        main_file = f"{directory}/__main__.py"
 
         # then we call the web interface
         print( "Starting the \033[94mEEGToolKit \033[96mViewer" )

@@ -30,11 +30,20 @@
 <pre><code class="python">&#34;&#34;&#34;
 Auxiliary functions to work within the streamlit environment
 &#34;&#34;&#34;
+import sys
+import os 
 
-from ..EEGData import EEGData, supported_filetypes
 import streamlit as st 
 from copy import deepcopy
-import os 
+
+try:
+    from EEGToolkit.EEGData import EEGData, supported_filetypes
+except ImportError: 
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(os.path.dirname(abspath))
+    sys.path.append(dname)
+
+    from EEGData import EEGData, supported_filetypes
 
 class Session:
     &#34;&#34;&#34;
