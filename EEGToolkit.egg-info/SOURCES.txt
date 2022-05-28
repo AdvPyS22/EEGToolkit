@@ -2,6 +2,7 @@ README.md
 setup.py
 EEGToolkit/__init__.py
 EEGToolkit/__main__.py
+EEGToolkit/test_procedure.py
 EEGToolkit.egg-info/PKG-INFO
 EEGToolkit.egg-info/SOURCES.txt
 EEGToolkit.egg-info/dependency_links.txt
