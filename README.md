@@ -82,7 +82,7 @@ a desirable extention.
 - [x] re-factoring for private methods ... 
 - [x] requirements.txt
 - [x] setup.py 
-    - [ ] (optional but kinda cool) adding EEGData to PYTHONPATH to allow direct CLI calling...
+    - [x] (optional but kinda cool) a cool Entrypoint to allow direct CLI calling...
 - [ ] `testpypi` distribution
 - [x] HTML documentation 
 
@@ -99,7 +99,7 @@ a desirable extention.
 
 ##### Task 2: 
 - [x] plotting is pretty much finished already...
-- [ ] Add units to the figure axes labels
+- [x] Add units to the figure axes labels
 - [x] (optional) adjust color scheme ...
 
 ##### Task 3: 
