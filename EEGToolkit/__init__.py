@@ -40,3 +40,7 @@ python3 EEGData.py --eeg "./data/eeg.npy" --event "./data/events.npy" --sampling
 """
 from .EEGData import *
 from .EEGStats import *
+
+__pdoc__ = { 
+                "EEGToolkit.test_procedure": False 
+            }
