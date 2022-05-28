@@ -54,8 +54,8 @@ signalscale = 1000 # millivolts
 # generate a summary figure
 e.summary( x_scale = timescale, y_scale = signalscale )
 ```
-
-
+### Example Output
+![](./test.png)
 
 > ## EEG data analysis
 > Students who choose this task ill be provided with the raw EEG recording of one channel, sampled at $500 [Hz]$ which was recorded from a participant presented with auditory stimuli. The students will also receive an events file describing when during the recording one out of two possible sounds were presented to the subject.
