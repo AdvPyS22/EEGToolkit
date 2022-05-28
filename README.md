@@ -7,6 +7,12 @@ Two types of datafiles are required to run: one with the raw EEG signal data, an
 
 The output is a summary figure that compares the EEG signal of different event types between each other as well as for each event against the baseline through a position-wise t-test, and highlights significant differences in signal responses. 
 
+### Installation
+This package can be installed via `pip` from the TestPyPi Index using
+```bash
+pip install -i https://test.pypi.org/simple/ EEGToolkit
+```
+
 ### Example Usage
 #### CLI
 ```bash
@@ -83,7 +89,7 @@ a desirable extention.
 - [x] requirements.txt
 - [x] setup.py 
     - [x] (optional but kinda cool) a cool Entrypoint to allow direct CLI calling...
-- [ ] `testpypi` distribution
+- [x] `testpypi` distribution
 - [x] HTML documentation 
 
 #### CLI TODOs:
