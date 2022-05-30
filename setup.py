@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="EEGToolkit", 
-    version="2.0.2",
+    version="2.0.3",
     author="Axel Giottonini, Noah Kleinschmidt, Kalvin Dobler",
     author_email="axel.giottonini@unifr.ch, noah.kleinschmidt@students.unibe.ch, kalvin.dobler@unifr.ch",
     description="A package for EEG data analysis of reaction time-delay experiments.",
