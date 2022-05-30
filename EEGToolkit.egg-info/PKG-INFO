@@ -22,6 +22,12 @@ Two types of datafiles are required to run: one with the raw EEG signal data, an
 
 The output is a summary figure that compares the EEG signal of different event types between each other as well as for each event against the baseline through a position-wise t-test, and highlights significant differences in signal responses. 
 
+### Installation
+This package can be installed via `pip` from the TestPyPi Index using
+```bash
+pip install -i https://test.pypi.org/simple/ EEGToolkit
+```
+
 ### Example Usage
 #### CLI
 ```bash
@@ -63,8 +69,8 @@ signalscale = 1000 # millivolts
 # generate a summary figure
 e.summary( x_scale = timescale, y_scale = signalscale )
 ```
-
-
+### Example Output
+![](./test.png)
 
 > ## EEG data analysis
 > Students who choose this task ill be provided with the raw EEG recording of one channel, sampled at $500 [Hz]$ which was recorded from a participant presented with auditory stimuli. The students will also receive an events file describing when during the recording one out of two possible sounds were presented to the subject.
@@ -98,7 +104,7 @@ a desirable extention.
 - [x] requirements.txt
 - [x] setup.py 
     - [x] (optional but kinda cool) a cool Entrypoint to allow direct CLI calling...
-- [ ] `testpypi` distribution
+- [x] `testpypi` distribution
 - [x] HTML documentation 
 
 #### CLI TODOs:
