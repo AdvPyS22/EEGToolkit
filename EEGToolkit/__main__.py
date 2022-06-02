@@ -4,6 +4,8 @@ web-app for the EEGData package.
 """
 import sys
 import os
+import signal 
+from time import sleep 
 
 import streamlit as st 
 import pandas as pd
@@ -16,6 +18,7 @@ from EEGData import supported_filetypes
 from auxiliary import Session, stEEGData
 
 if __name__ == "__main__":
+        pid = os.getpid()
         session = Session()
 
         # =================================================================
@@ -128,6 +131,10 @@ if __name__ == "__main__":
                                                 "Compute",
                                                 help = "Perform computations and output a figure",
                                         )
+        kill_button = lower_ctrl_col1.button( 
+                                                "Close App",
+                                                help = "Close the App",
+                                        )
 
         # =================================================================
         #                       Computational Section
@@ -157,3 +164,8 @@ if __name__ == "__main__":
                                 )
                 
                 figure_container.pyplot( fig )
+        
+        if kill_button:
+                st.info( "Shutting down...\nThis window can now be closed.")
+                sleep(0.5)
+                os.kill( pid, signal.SIGINT )
