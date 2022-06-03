@@ -22,7 +22,6 @@ echo "Documentation generated successfully!"
 #             Build a new binary
 # ----------------------------------------
 
-
 # first make new requirements
 pipreqs ./EEGToolkit --force --savepath ./requirements.txt
 echo "Requirements generated successfully!"
@@ -30,3 +29,23 @@ echo "Requirements generated successfully!"
 # now build
 python -m build .
 echo "Binary generated successfully!"
+
+
+# ----------------------------------------
+#        Optional additional steps
+# ----------------------------------------
+
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    -d|--dist)
+        for i in $(ls dist); do latest=$i; done
+        twine upload --repository testpypi ./dist/$latest
+        shift # past argument
+      ;;
+    -i|--install)
+        for i in $(ls dist); do latest=$i; done
+        pip install ./dist/$latest
+        shift # past argument
+      ;;
+  esac
+done

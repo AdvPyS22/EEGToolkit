@@ -237,6 +237,9 @@ class EEGData():
             self._extracted_events = events_to_extract
             return data
 
+        if start_sec is None or stop_sec is None:
+            raise ValueError( f"A valid timewindow needs to be specified as float values! Received start_sec = {start_sec} and stop_sec = {stop_sec}" )
+
         # now the part for extracting only a 
         # single event type data
         data = self._extract_window(start_sec, stop_sec, event_type)
@@ -730,7 +733,7 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                                             inspect.getfile( plot_signal ) 
                                         )
         directory = os.path.dirname( directory )
-        main_file = f"{directory}/main.py"
+        main_file = f"{directory}/__main__.py"
 
         # then we call the web interface
         print( "Starting the \033[94mEEGToolKit \033[96mViewer" )

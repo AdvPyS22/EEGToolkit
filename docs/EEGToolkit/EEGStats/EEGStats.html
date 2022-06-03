@@ -39,10 +39,58 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
+
+# ----------------------------------------------------------------
+#                         Default Settings
+# ----------------------------------------------------------------
+
+timescale = 1
+eegscale = 1
+
+def get_unit_scale( scale : int, ref_scale : float, ref_unit : str ):
+    &#34;&#34;&#34;
+    Generates a scaled unit axis label
+
+    Parameters
+    ----------
+    scale : int   
+        The scaling factor of the given reference unit.
+    ref_scale : foat
+        The scaling factor for the base data units. 
+        E.g. use 0.01 if the data was recorded in milli-seconds rather than seconds, ect. 
+    ref_unit : str
+        The unit name. E.g. `&#34;V&#34;` for Volts or `&#34;s&#34;` for seconds etc. 
+    
+    Returns 
+    -------
+    s : str
+        A scaled representation of the given unit for figure axis labelling.
+        E.g. `&#34;[mV]&#34;`, `&#34;[ns]&#34;`, or `&#34;[$10^{-4}$s]&#34; etc. 
+    &#34;&#34;&#34;
+
+    scale_units = {
+                    1 * ref_scale : &#34;&#34;,
+                    10 * ref_scale : &#34;d&#34;, 
+                    100 * ref_scale  : &#34;c&#34;, 
+                    1000  * ref_scale : &#34;m&#34;,
+                    10**6  * ref_scale : &#34;n&#34;,
+            }
+
+    # try to get the appropriate scale unit 
+    s = scale_units.get( scale, None )
+    
+    # if no unit is pre-defined, just use 10^n notation
+    if s is None: 
+        s = int( np.log10( 1/scale ) )
+        s = &#34;$10^{&#34; + str(s) + &#34;}$&#34;
+    
+    # now format to e.g. [mV] or [10^-4s] etc. for use in axis labels...
+    s = f&#34;[{s}{ref_unit}]&#34;
+    return s 
+
 # ----------------------------------------------------------------
 #                        Data Statistics 
 # ----------------------------------------------------------------
-
 
 def mean(extracted_EEGData:np.ndarray) -&gt; np.ndarray:
     &#34;&#34;&#34;
@@ -153,7 +201,7 @@ def plot_signal(
                     baseline : np.ndarray = None,
                     significance_level:float = 0.05,
                     make_legend = False,
-                    ax = None ) -&gt; None:
+                    ax = None ) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Visualises a single EGG signal dataset from an `m x n numpy ndarray`
     with `m` repeated datasets and `n` entries per set. It generates a solid
@@ -235,7 +283,7 @@ def difference_plot(extracted_EEGData_1:np.ndarray,
                     x_scale=10**3,
                     y_scale=10**3,
                     make_legend = False, 
-                    ax = None ) -&gt; None:
+                    ax = None ) -&gt; np.ndarray:
 
     &#34;&#34;&#34;
     Visualises the difference between two EEG signals and tests
@@ -371,13 +419,7 @@ def _plot_(
         # add the shaded fillings for significantly different
         # timepoint areas
         signif_level = kwargs.pop( &#34;significance_level&#34;, 0.05 )
-        _shade_singificant_regions(
-                                    ax, 
-                                    significance_level = signif_level, 
-                                    pvalues = pvalues, 
-                                    xvalues = x_values,
-                                    ylim = yvalues, 
-                                )
+        _shade_significant_regions(ax, significance_level=signif_level, pvalues=pvalues, xvalues=x_values, ylim=yvalues)
 
 
 
@@ -386,8 +428,10 @@ def _plot_(
 
     # and some axes formatting...
     ax.set_title(&#34;Average EEG Signal (Shaded area SEM)&#34;)
-    ax.set_ylabel(&#34;Signal\namplitude&#34;)
-    ax.set_xlabel(&#34;Time relative to event&#34;)
+    yunit = get_unit_scale( y_scale, ref_scale = eegscale, ref_unit = &#34;V&#34; ) 
+    ax.set_ylabel(f&#34;Signal\namplitude {yunit}&#34;)
+    xunit = get_unit_scale( x_scale, ref_scale = timescale, ref_unit = &#34;s&#34; ) 
+    ax.set_xlabel(f&#34;Time relative to event {xunit}&#34;)
     
     if make_legend:
         handles = [
@@ -459,13 +503,8 @@ def _difference_plot_(ax,
 
     # add the shaded fillings for significantly different
     # timepoint areas
-    _shade_singificant_regions(
-                                ax, 
-                                significance_level = significance_level, 
-                                pvalues = pvalues, 
-                                xvalues = x_values,
-                                ylim = yvalues, 
-                            )
+    _shade_significant_regions(ax, significance_level=significance_level, pvalues=pvalues, xvalues=x_values,
+                               ylim=yvalues)
 
     # plot scaled signals 1 and 2
     signal_1 = mean_1 * y_scale
@@ -479,8 +518,10 @@ def _difference_plot_(ax,
 
     # and some axes formatting...
     ax.set_title(&#34;Average EEG Signal (Shaded area significant regions)&#34;)
-    ax.set_ylabel(&#34;Signal\namplitude&#34;)
-    ax.set_xlabel(&#34;Time relative to event&#34;)
+    yunit = get_unit_scale( y_scale, ref_scale = eegscale, ref_unit = &#34;V&#34; ) 
+    ax.set_ylabel(f&#34;Signal\namplitude {yunit}&#34;)
+    xunit = get_unit_scale( x_scale, ref_scale = timescale, ref_unit = &#34;s&#34; ) 
+    ax.set_xlabel(f&#34;Time relative to event {xunit}&#34;)
 
     if make_legend: 
         # now add a custom legend
@@ -506,7 +547,7 @@ def _difference_plot_(ax,
                         )
     return pvalues
 
-def _shade_singificant_regions(ax, significance_level : float , pvalues : np.ndarray , xvalues : np.ndarray , ylim : tuple ):
+def _shade_significant_regions(ax, significance_level : float , pvalues : np.ndarray , xvalues : np.ndarray , ylim : tuple ):
     &#34;&#34;&#34;
     Shades the background of regions (x-value ranges) where corresponding p-values
     are below a given significance level. 
@@ -556,7 +597,11 @@ def _scale_yboundries(y_scale, max_y, min_y, pad = 1 ):
     &#34;&#34;&#34;
     max_y *= y_scale * pad
     min_y *= y_scale * pad
-    return min_y, max_y</code></pre>
+    return min_y, max_y
+
+
+if __name__ == &#34;__main__&#34;:
+    get_unit_scale( 10000, 1, &#34;V&#34; )</code></pre>
 </details>
 </section>
 <section>
@@ -631,7 +676,7 @@ difference between Signals 1 and 2 at each position.</dd>
 </details>
 </dd>
 <dt id="EEGToolkit.EEGStats.EEGStats.difference_plot"><code class="name flex">
-<span>def <span class="ident">difference_plot</span></span>(<span>extracted_EEGData_1: numpy.ndarray, extracted_EEGData_2: numpy.ndarray, sampling_frequency: float, start_sec: float, stop_sec: float, significance_level: float = 0.05, x_scale=1000, y_scale=1000, make_legend=False, ax=None) ‑> None</span>
+<span>def <span class="ident">difference_plot</span></span>(<span>extracted_EEGData_1: numpy.ndarray, extracted_EEGData_2: numpy.ndarray, sampling_frequency: float, start_sec: float, stop_sec: float, significance_level: float = 0.05, x_scale=1000, y_scale=1000, make_legend=False, ax=None) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Visualises the difference between two EEG signals and tests
@@ -683,7 +728,7 @@ two signals at each signal position (timepoint).</dd>
                     x_scale=10**3,
                     y_scale=10**3,
                     make_legend = False, 
-                    ax = None ) -&gt; None:
+                    ax = None ) -&gt; np.ndarray:
 
     &#34;&#34;&#34;
     Visualises the difference between two EEG signals and tests
@@ -756,6 +801,72 @@ two signals at each signal position (timepoint).</dd>
     return pvalues</code></pre>
 </details>
 </dd>
+<dt id="EEGToolkit.EEGStats.EEGStats.get_unit_scale"><code class="name flex">
+<span>def <span class="ident">get_unit_scale</span></span>(<span>scale: int, ref_scale: float, ref_unit: str)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Generates a scaled unit axis label</p>
+<h2 id="parameters">Parameters</h2>
+<dl>
+<dt><strong><code>scale</code></strong> :&ensp;<code>int
+</code></dt>
+<dd>The scaling factor of the given reference unit.</dd>
+<dt><strong><code>ref_scale</code></strong> :&ensp;<code>foat</code></dt>
+<dd>The scaling factor for the base data units.
+E.g. use 0.01 if the data was recorded in milli-seconds rather than seconds, ect.</dd>
+<dt><strong><code>ref_unit</code></strong> :&ensp;<code>str</code></dt>
+<dd>The unit name. E.g. <code>"V"</code> for Volts or <code>"s"</code> for seconds etc.</dd>
+</dl>
+<h2 id="returns">Returns</h2>
+<p>s : str
+A scaled representation of the given unit for figure axis labelling.
+E.g. <code>"[mV]"</code>, <code>"[ns]"</code>, or `"[$10^{-4}$s]" etc.</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def get_unit_scale( scale : int, ref_scale : float, ref_unit : str ):
+    &#34;&#34;&#34;
+    Generates a scaled unit axis label
+
+    Parameters
+    ----------
+    scale : int   
+        The scaling factor of the given reference unit.
+    ref_scale : foat
+        The scaling factor for the base data units. 
+        E.g. use 0.01 if the data was recorded in milli-seconds rather than seconds, ect. 
+    ref_unit : str
+        The unit name. E.g. `&#34;V&#34;` for Volts or `&#34;s&#34;` for seconds etc. 
+    
+    Returns 
+    -------
+    s : str
+        A scaled representation of the given unit for figure axis labelling.
+        E.g. `&#34;[mV]&#34;`, `&#34;[ns]&#34;`, or `&#34;[$10^{-4}$s]&#34; etc. 
+    &#34;&#34;&#34;
+
+    scale_units = {
+                    1 * ref_scale : &#34;&#34;,
+                    10 * ref_scale : &#34;d&#34;, 
+                    100 * ref_scale  : &#34;c&#34;, 
+                    1000  * ref_scale : &#34;m&#34;,
+                    10**6  * ref_scale : &#34;n&#34;,
+            }
+
+    # try to get the appropriate scale unit 
+    s = scale_units.get( scale, None )
+    
+    # if no unit is pre-defined, just use 10^n notation
+    if s is None: 
+        s = int( np.log10( 1/scale ) )
+        s = &#34;$10^{&#34; + str(s) + &#34;}$&#34;
+    
+    # now format to e.g. [mV] or [10^-4s] etc. for use in axis labels...
+    s = f&#34;[{s}{ref_unit}]&#34;
+    return s </code></pre>
+</details>
+</dd>
 <dt id="EEGToolkit.EEGStats.EEGStats.mean"><code class="name flex">
 <span>def <span class="ident">mean</span></span>(<span>extracted_EEGData: numpy.ndarray) ‑> numpy.ndarray</span>
 </code></dt>
@@ -798,7 +909,7 @@ with <code>m</code> repeated datasets and <code>n</code> entries per set along a
 </details>
 </dd>
 <dt id="EEGToolkit.EEGStats.EEGStats.plot_signal"><code class="name flex">
-<span>def <span class="ident">plot_signal</span></span>(<span>extracted_EEGData: numpy.ndarray, sampling_frequency: float, start_sec: float, stop_sec: float, x_scale=1000, y_scale=1000, baseline: numpy.ndarray = None, significance_level: float = 0.05, make_legend=False, ax=None) ‑> None</span>
+<span>def <span class="ident">plot_signal</span></span>(<span>extracted_EEGData: numpy.ndarray, sampling_frequency: float, start_sec: float, stop_sec: float, x_scale=1000, y_scale=1000, baseline: numpy.ndarray = None, significance_level: float = 0.05, make_legend=False, ax=None) ‑> numpy.ndarray</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Visualises a single EGG signal dataset from an <code>m x n numpy ndarray</code>
@@ -852,7 +963,7 @@ signal and the baseline (if provided) at each signal position (timepoint).</dd>
                     baseline : np.ndarray = None,
                     significance_level:float = 0.05,
                     make_legend = False,
-                    ax = None ) -&gt; None:
+                    ax = None ) -&gt; np.ndarray:
     &#34;&#34;&#34;
     Visualises a single EGG signal dataset from an `m x n numpy ndarray`
     with `m` repeated datasets and `n` entries per set. It generates a solid
@@ -989,9 +1100,10 @@ datasets and <code>n</code> entries per set along axis 1
 </ul>
 </li>
 <li><h3><a href="#header-functions">Functions</a></h3>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="EEGToolkit.EEGStats.EEGStats.compare_signals" href="#EEGToolkit.EEGStats.EEGStats.compare_signals">compare_signals</a></code></li>
 <li><code><a title="EEGToolkit.EEGStats.EEGStats.difference_plot" href="#EEGToolkit.EEGStats.EEGStats.difference_plot">difference_plot</a></code></li>
+<li><code><a title="EEGToolkit.EEGStats.EEGStats.get_unit_scale" href="#EEGToolkit.EEGStats.EEGStats.get_unit_scale">get_unit_scale</a></code></li>
 <li><code><a title="EEGToolkit.EEGStats.EEGStats.mean" href="#EEGToolkit.EEGStats.EEGStats.mean">mean</a></code></li>
 <li><code><a title="EEGToolkit.EEGStats.EEGStats.plot_signal" href="#EEGToolkit.EEGStats.EEGStats.plot_signal">plot_signal</a></code></li>
 <li><code><a title="EEGToolkit.EEGStats.EEGStats.sem" href="#EEGToolkit.EEGStats.EEGStats.sem">sem</a></code></li>

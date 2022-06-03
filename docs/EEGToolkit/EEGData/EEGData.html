@@ -37,15 +37,25 @@ It works with two separate input datafiles, one storing the EEG signal itself as
 describing event metadata as a 2D array, describing both the timepoints and the type of event in two columns.
 
 &#34;&#34;&#34;
+import sys
+import os 
 
 import subprocess
 import inspect
-import os 
 import argparse
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from EEGToolkit.EEGStats import plot_signal, difference_plot
+
+try:
+    from EEGToolkit.EEGStats import plot_signal, difference_plot
+except ImportError:
+    abspath = os.path.abspath(__file__)
+    dname = os.path.dirname(os.path.dirname(abspath))
+    sys.path.append(dname)
+
+    from EEGStats import plot_signal, difference_plot
+    
 
 supported_filetypes = [ &#34;npy&#34;, &#34;tsv&#34;, &#34;csv&#34;, &#34;txt&#34; ]
 class EEGData():
@@ -258,6 +268,9 @@ class EEGData():
             self._data = data
             self._extracted_events = events_to_extract
             return data
+
+        if start_sec is None or stop_sec is None:
+            raise ValueError( f&#34;A valid timewindow needs to be specified as float values! Received start_sec = {start_sec} and stop_sec = {stop_sec}&#34; )
 
         # now the part for extracting only a 
         # single event type data
@@ -752,7 +765,7 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                                             inspect.getfile( plot_signal ) 
                                         )
         directory = os.path.dirname( directory )
-        main_file = f&#34;{directory}/main.py&#34;
+        main_file = f&#34;{directory}/__main__.py&#34;
 
         # then we call the web interface
         print( &#34;Starting the \033[94mEEGToolKit \033[96mViewer&#34; )
@@ -761,19 +774,29 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
     else: 
 
         # the main program (reading datafiles, extracting, and summarizing)
-        data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
-        data.extract( args.start_sec, args.stop_sec )
-        if args.baseline:
-            data.baseline()
-        data.summary(
-                        significance_level = args.p_value,
-                        x_scale = args.x_scale,
-                        y_scale = args.y_scale,
-                        output = args.output
-                    )
+        try:
+            data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
+            data.extract( args.start_sec, args.stop_sec )
+            if args.baseline:
+                data.baseline()
+            data.summary(
+                            significance_level = args.p_value,
+                            x_scale = args.x_scale,
+                            y_scale = args.y_scale,
+                            output = args.output
+                        )
 
-        if args.output is not None: 
-            print( f&#34;Output saved successfully to: &#39;{args.output}&#39;&#34; ) 
+            if args.output is not None: 
+                print( f&#34;Output saved successfully to: &#39;{args.output}&#39;&#34; )
+        except FileNotFoundError as e:
+            print(e)
+            return
+        except TypeError as e:
+            print(e)
+            return
+        except ValueError as e:
+            print(e)
+            return
 
 if __name__ == &#34;__main__&#34;:
 
@@ -927,7 +950,7 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
                                             inspect.getfile( plot_signal ) 
                                         )
         directory = os.path.dirname( directory )
-        main_file = f&#34;{directory}/main.py&#34;
+        main_file = f&#34;{directory}/__main__.py&#34;
 
         # then we call the web interface
         print( &#34;Starting the \033[94mEEGToolKit \033[96mViewer&#34; )
@@ -936,19 +959,29 @@ Accepted input file types are {supported_filetypes}. The EEG-signal datafile mus
     else: 
 
         # the main program (reading datafiles, extracting, and summarizing)
-        data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
-        data.extract( args.start_sec, args.stop_sec )
-        if args.baseline:
-            data.baseline()
-        data.summary(
-                        significance_level = args.p_value,
-                        x_scale = args.x_scale,
-                        y_scale = args.y_scale,
-                        output = args.output
-                    )
+        try:
+            data = EEGData(args.eeg_path, args.event_path, args.sampling_frequency)
+            data.extract( args.start_sec, args.stop_sec )
+            if args.baseline:
+                data.baseline()
+            data.summary(
+                            significance_level = args.p_value,
+                            x_scale = args.x_scale,
+                            y_scale = args.y_scale,
+                            output = args.output
+                        )
 
-        if args.output is not None: 
-            print( f&#34;Output saved successfully to: &#39;{args.output}&#39;&#34; ) </code></pre>
+            if args.output is not None: 
+                print( f&#34;Output saved successfully to: &#39;{args.output}&#39;&#34; )
+        except FileNotFoundError as e:
+            print(e)
+            return
+        except TypeError as e:
+            print(e)
+            return
+        except ValueError as e:
+            print(e)
+            return</code></pre>
 </details>
 </dd>
 </dl>
@@ -1200,6 +1233,9 @@ event information for the signal datafile.</dd>
             self._data = data
             self._extracted_events = events_to_extract
             return data
+
+        if start_sec is None or stop_sec is None:
+            raise ValueError( f&#34;A valid timewindow needs to be specified as float values! Received start_sec = {start_sec} and stop_sec = {stop_sec}&#34; )
 
         # now the part for extracting only a 
         # single event type data
@@ -1855,6 +1891,9 @@ list of ndarrays in the same order as the provided event-type labels.</dd>
         self._data = data
         self._extracted_events = events_to_extract
         return data
+
+    if start_sec is None or stop_sec is None:
+        raise ValueError( f&#34;A valid timewindow needs to be specified as float values! Received start_sec = {start_sec} and stop_sec = {stop_sec}&#34; )
 
     # now the part for extracting only a 
     # single event type data

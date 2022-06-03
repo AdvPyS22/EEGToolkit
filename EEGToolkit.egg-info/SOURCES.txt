@@ -1,7 +1,9 @@
+LICENSE.md
 README.md
 setup.py
 EEGToolkit/__init__.py
-EEGToolkit/main.py
+EEGToolkit/__main__.py
+EEGToolkit/test_procedure.py
 EEGToolkit.egg-info/PKG-INFO
 EEGToolkit.egg-info/SOURCES.txt
 EEGToolkit.egg-info/dependency_links.txt
@@ -9,6 +11,7 @@ EEGToolkit.egg-info/entry_points.txt
 EEGToolkit.egg-info/top_level.txt
 EEGToolkit/EEGData/EEGData.py
 EEGToolkit/EEGData/__init__.py
+EEGToolkit/EEGData/__main__.py
 EEGToolkit/EEGStats/EEGStats.py
 EEGToolkit/EEGStats/__init__.py
 EEGToolkit/auxiliary/__init__.py

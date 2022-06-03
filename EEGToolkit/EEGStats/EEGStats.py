@@ -10,10 +10,58 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Patch
 
+
+# ----------------------------------------------------------------
+#                         Default Settings
+# ----------------------------------------------------------------
+
+timescale = 1
+eegscale = 1
+
+def get_unit_scale( scale : int, ref_scale : float, ref_unit : str ):
+    """
+    Generates a scaled unit axis label
+
+    Parameters
+    ----------
+    scale : int   
+        The scaling factor of the given reference unit.
+    ref_scale : foat
+        The scaling factor for the base data units. 
+        E.g. use 0.01 if the data was recorded in milli-seconds rather than seconds, ect. 
+    ref_unit : str
+        The unit name. E.g. `"V"` for Volts or `"s"` for seconds etc. 
+    
+    Returns 
+    -------
+    s : str
+        A scaled representation of the given unit for figure axis labelling.
+        E.g. `"[mV]"`, `"[ns]"`, or `"[$10^{-4}$s]" etc. 
+    """
+
+    scale_units = {
+                    1 * ref_scale : "",
+                    10 * ref_scale : "d", 
+                    100 * ref_scale  : "c", 
+                    1000  * ref_scale : "m",
+                    10**6  * ref_scale : "n",
+            }
+
+    # try to get the appropriate scale unit 
+    s = scale_units.get( scale, None )
+    
+    # if no unit is pre-defined, just use 10^n notation
+    if s is None: 
+        s = int( np.log10( 1/scale ) )
+        s = "$10^{" + str(s) + "}$"
+    
+    # now format to e.g. [mV] or [10^-4s] etc. for use in axis labels...
+    s = f"[{s}{ref_unit}]"
+    return s 
+
 # ----------------------------------------------------------------
 #                        Data Statistics 
 # ----------------------------------------------------------------
-
 
 def mean(extracted_EEGData:np.ndarray) -> np.ndarray:
     """
@@ -124,7 +172,7 @@ def plot_signal(
                     baseline : np.ndarray = None,
                     significance_level:float = 0.05,
                     make_legend = False,
-                    ax = None ) -> None:
+                    ax = None ) -> np.ndarray:
     """
     Visualises a single EGG signal dataset from an `m x n numpy ndarray`
     with `m` repeated datasets and `n` entries per set. It generates a solid
@@ -206,7 +254,7 @@ def difference_plot(extracted_EEGData_1:np.ndarray,
                     x_scale=10**3,
                     y_scale=10**3,
                     make_legend = False, 
-                    ax = None ) -> None:
+                    ax = None ) -> np.ndarray:
 
     """
     Visualises the difference between two EEG signals and tests
@@ -351,8 +399,10 @@ def _plot_(
 
     # and some axes formatting...
     ax.set_title("Average EEG Signal (Shaded area SEM)")
-    ax.set_ylabel("Signal\namplitude")
-    ax.set_xlabel("Time relative to event (ms)")
+    yunit = get_unit_scale( y_scale, ref_scale = eegscale, ref_unit = "V" ) 
+    ax.set_ylabel(f"Signal\namplitude {yunit}")
+    xunit = get_unit_scale( x_scale, ref_scale = timescale, ref_unit = "s" ) 
+    ax.set_xlabel(f"Time relative to event {xunit}")
     
     if make_legend:
         handles = [
@@ -439,8 +489,10 @@ def _difference_plot_(ax,
 
     # and some axes formatting...
     ax.set_title("Average EEG Signal (Shaded area significant regions)")
-    ax.set_ylabel("Signal\namplitude")
-    ax.set_xlabel("Time relative to event (ms)")
+    yunit = get_unit_scale( y_scale, ref_scale = eegscale, ref_unit = "V" ) 
+    ax.set_ylabel(f"Signal\namplitude {yunit}")
+    xunit = get_unit_scale( x_scale, ref_scale = timescale, ref_unit = "s" ) 
+    ax.set_xlabel(f"Time relative to event {xunit}")
 
     if make_legend: 
         # now add a custom legend
@@ -517,3 +569,7 @@ def _scale_yboundries(y_scale, max_y, min_y, pad = 1 ):
     max_y *= y_scale * pad
     min_y *= y_scale * pad
     return min_y, max_y
+
+
+if __name__ == "__main__":
+    get_unit_scale( 10000, 1, "V" )
